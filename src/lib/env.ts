@@ -8,9 +8,14 @@ type PublicSupabaseConfigStatus = {
   missing: Array<'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY'>
 }
 
-function requirePublicEnv(name: 'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY' | 'NEXT_PUBLIC_SUPABASE_ANON_KEY') {
-  const value = process.env[name]
+const publicSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const publicSupabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+const publicSupabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+function requirePublicEnv(
+  name: 'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  value: string | undefined,
+) {
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`)
   }
@@ -21,11 +26,11 @@ function requirePublicEnv(name: 'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SUPABA
 export function getPublicSupabaseConfigStatus(): PublicSupabaseConfigStatus {
   const missing: PublicSupabaseConfigStatus['missing'] = []
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (!publicSupabaseUrl) {
     missing.push('NEXT_PUBLIC_SUPABASE_URL')
   }
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!publicSupabasePublishableKey && !publicSupabaseAnonKey) {
     missing.push('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY')
   }
 
@@ -40,9 +45,11 @@ export function hasPublicSupabaseConfig() {
 }
 
 export function getPublicSupabaseConfig(): PublicSupabaseConfig {
-  const url = requirePublicEnv('NEXT_PUBLIC_SUPABASE_URL')
-  const publishableKey =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || requirePublicEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+  const url = requirePublicEnv('NEXT_PUBLIC_SUPABASE_URL', publicSupabaseUrl)
+  const publishableKey = requirePublicEnv(
+    'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    publicSupabasePublishableKey || publicSupabaseAnonKey,
+  )
 
   return {
     url,
