@@ -27,6 +27,8 @@ function handleActionError(path: string, error: unknown): never {
 export async function createVolunteerAction(formData: FormData) {
   await requireAdmin()
 
+  let redirectPath = '/voluntarios'
+
   try {
     const { input, photoFile } = parseVolunteerFormData(formData)
     const supabase = await createSupabaseServerClient()
@@ -82,10 +84,12 @@ export async function createVolunteerAction(formData: FormData) {
     }
 
     revalidatePath('/voluntarios')
-    redirect(`/voluntarios/${volunteer.id}?saved=created`)
+    redirectPath = `/voluntarios/${volunteer.id}?saved=created`
   } catch (error) {
     handleActionError('/voluntarios/novo', error)
   }
+
+  redirect(redirectPath)
 }
 
 export async function updateVolunteerAction(formData: FormData) {
@@ -100,6 +104,7 @@ export async function updateVolunteerAction(formData: FormData) {
   const volunteerId = volunteerIdEntry
   const detailPath = `/voluntarios/${volunteerId}`
   const intent = typeof formData.get('intent') === 'string' ? formData.get('intent') : 'save'
+  let redirectPath = `${detailPath}?saved=updated`
 
   try {
     const supabase = await createSupabaseServerClient()
@@ -117,77 +122,78 @@ export async function updateVolunteerAction(formData: FormData) {
 
       revalidatePath('/voluntarios')
       revalidatePath(detailPath)
-      redirect(`${detailPath}?saved=${active ? 'reactivated' : 'deactivated'}`)
-    }
+      redirectPath = `${detailPath}?saved=${active ? 'reactivated' : 'deactivated'}`
+    } else {
+      const { input, photoFile } = parseVolunteerFormData(formData)
+      const { data: currentVolunteer, error: currentVolunteerError } = await supabase
+        .from('volunteers')
+        .select('photo_path')
+        .eq('id', volunteerId)
+        .single()
 
-    const { input, photoFile } = parseVolunteerFormData(formData)
-    const { data: currentVolunteer, error: currentVolunteerError } = await supabase
-      .from('volunteers')
-      .select('photo_path')
-      .eq('id', volunteerId)
-      .single()
-
-    if (currentVolunteerError) {
-      throw new Error(currentVolunteerError.message)
-    }
-
-    let nextPhotoPath = currentVolunteer.photo_path as string | null
-
-    if (input.removePhoto && currentVolunteer.photo_path && !photoFile) {
-      await deleteVolunteerPhoto(supabase, currentVolunteer.photo_path)
-      nextPhotoPath = null
-    }
-
-    if (photoFile) {
-      nextPhotoPath = await uploadVolunteerPhoto(supabase, volunteerId, photoFile, currentVolunteer.photo_path)
-    }
-
-    const { error: updateError } = await supabase
-      .from('volunteers')
-      .update({
-        name: input.name,
-        normalized_name: input.normalizedName,
-        photo_path: nextPhotoPath,
-        gender: input.gender,
-        birth_date: input.birthDate,
-        join_date: input.joinDate,
-        address: input.address,
-        whatsapp: input.whatsapp,
-        normalized_whatsapp: input.normalizedWhatsapp,
-        availability_status: input.availabilityStatus,
-        notes: input.notes,
-        active: input.active,
-      })
-      .eq('id', volunteerId)
-
-    if (updateError) {
-      throw new Error(updateError.message)
-    }
-
-    const { error: deleteAreasError } = await supabase.from('volunteer_areas').delete().eq('volunteer_id', volunteerId)
-
-    if (deleteAreasError) {
-      throw new Error(deleteAreasError.message)
-    }
-
-    if (input.selectedAreas.length > 0) {
-      const { error: insertAreasError } = await supabase.from('volunteer_areas').insert(
-        input.selectedAreas.map((areaId) => ({
-          volunteer_id: volunteerId,
-          area_id: areaId,
-          role_in_area: input.rolesByArea[areaId] ?? 'member',
-        })),
-      )
-
-      if (insertAreasError) {
-        throw new Error(insertAreasError.message)
+      if (currentVolunteerError) {
+        throw new Error(currentVolunteerError.message)
       }
-    }
 
-    revalidatePath('/voluntarios')
-    revalidatePath(detailPath)
-    redirect(`${detailPath}?saved=updated`)
+      let nextPhotoPath = currentVolunteer.photo_path as string | null
+
+      if (input.removePhoto && currentVolunteer.photo_path && !photoFile) {
+        await deleteVolunteerPhoto(supabase, currentVolunteer.photo_path)
+        nextPhotoPath = null
+      }
+
+      if (photoFile) {
+        nextPhotoPath = await uploadVolunteerPhoto(supabase, volunteerId, photoFile, currentVolunteer.photo_path)
+      }
+
+      const { error: updateError } = await supabase
+        .from('volunteers')
+        .update({
+          name: input.name,
+          normalized_name: input.normalizedName,
+          photo_path: nextPhotoPath,
+          gender: input.gender,
+          birth_date: input.birthDate,
+          join_date: input.joinDate,
+          address: input.address,
+          whatsapp: input.whatsapp,
+          normalized_whatsapp: input.normalizedWhatsapp,
+          availability_status: input.availabilityStatus,
+          notes: input.notes,
+          active: input.active,
+        })
+        .eq('id', volunteerId)
+
+      if (updateError) {
+        throw new Error(updateError.message)
+      }
+
+      const { error: deleteAreasError } = await supabase.from('volunteer_areas').delete().eq('volunteer_id', volunteerId)
+
+      if (deleteAreasError) {
+        throw new Error(deleteAreasError.message)
+      }
+
+      if (input.selectedAreas.length > 0) {
+        const { error: insertAreasError } = await supabase.from('volunteer_areas').insert(
+          input.selectedAreas.map((areaId) => ({
+            volunteer_id: volunteerId,
+            area_id: areaId,
+            role_in_area: input.rolesByArea[areaId] ?? 'member',
+          })),
+        )
+
+        if (insertAreasError) {
+          throw new Error(insertAreasError.message)
+        }
+      }
+
+      revalidatePath('/voluntarios')
+      revalidatePath(detailPath)
+    }
   } catch (error) {
     handleActionError(detailPath, error)
   }
+
+  redirect(redirectPath)
 }
