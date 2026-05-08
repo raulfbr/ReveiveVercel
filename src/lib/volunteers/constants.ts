@@ -1,4 +1,4 @@
-import type { AvailabilityStatus, VolunteerAreaRole, VolunteerGender } from '@/lib/types'
+import type { AvailabilityStatus, VolunteerAreaRole, VolunteerCareStatus, VolunteerGender } from '@/lib/types'
 
 export const volunteerGenderOptions: Array<{ value: VolunteerGender; label: string }> = [
   { value: 'female', label: 'Feminino' },
@@ -19,3 +19,10 @@ export const areaRoleOptions: Array<{ value: VolunteerAreaRole; label: string }>
   { value: 'coordinator', label: 'Coordenador' },
 ]
 
+export const careStatusOptions: Array<{ value: VolunteerCareStatus; label: string }> = [
+  { value: 'new', label: 'Novo' },
+  { value: 'active', label: 'Ativo em acompanhamento' },
+  { value: 'needs_contact', label: 'Precisa contato' },
+  { value: 'paused', label: 'Em pausa' },
+  { value: 'inactive', label: 'Inativo' },
+]

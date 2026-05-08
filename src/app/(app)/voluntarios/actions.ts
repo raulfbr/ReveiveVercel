@@ -45,6 +45,11 @@ export async function createVolunteerAction(formData: FormData) {
         whatsapp: input.whatsapp,
         normalized_whatsapp: input.normalizedWhatsapp,
         availability_status: input.availabilityStatus,
+        care_status: input.careStatus,
+        last_contact_at: input.lastContactAt,
+        next_step: input.nextStep,
+        care_responsible: input.careResponsible,
+        next_follow_up_at: input.nextFollowUpAt,
         notes: input.notes,
         active: input.active,
       })
@@ -113,7 +118,7 @@ export async function updateVolunteerAction(formData: FormData) {
       const active = intent === 'reactivate'
       const { error: statusError } = await supabase
         .from('volunteers')
-        .update({ active })
+        .update({ active, care_status: active ? 'active' : 'inactive' })
         .eq('id', volunteerId)
 
       if (statusError) {
@@ -159,6 +164,11 @@ export async function updateVolunteerAction(formData: FormData) {
           whatsapp: input.whatsapp,
           normalized_whatsapp: input.normalizedWhatsapp,
           availability_status: input.availabilityStatus,
+          care_status: input.careStatus,
+          last_contact_at: input.lastContactAt,
+          next_step: input.nextStep,
+          care_responsible: input.careResponsible,
+          next_follow_up_at: input.nextFollowUpAt,
           notes: input.notes,
           active: input.active,
         })

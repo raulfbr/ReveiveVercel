@@ -2,6 +2,7 @@ export type AppUserRole = 'admin' | 'viewer'
 export type VolunteerAreaRole = 'member' | 'leader' | 'coordinator'
 export type VolunteerGender = 'female' | 'male' | 'other' | 'prefer_not_to_say'
 export type AvailabilityStatus = 'available' | 'limited' | 'unavailable'
+export type VolunteerCareStatus = 'new' | 'active' | 'needs_contact' | 'paused' | 'inactive'
 
 export type AppUser = {
   id: string
@@ -40,10 +41,14 @@ export type VolunteerRecord = {
   whatsapp: string | null
   normalizedWhatsapp: string | null
   availabilityStatus: AvailabilityStatus | null
+  careStatus: VolunteerCareStatus
+  lastContactAt: string | null
+  nextStep: string | null
+  careResponsible: string | null
+  nextFollowUpAt: string | null
   notes: string | null
   active: boolean
   createdAt: string
   updatedAt: string
   areas: VolunteerAreaAssignment[]
 }
-

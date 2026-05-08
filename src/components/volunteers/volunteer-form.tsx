@@ -1,5 +1,5 @@
 import type { ServiceArea, VolunteerRecord } from '@/lib/types'
-import { availabilityOptions, areaRoleOptions, volunteerGenderOptions } from '@/lib/volunteers/constants'
+import { availabilityOptions, areaRoleOptions, careStatusOptions, volunteerGenderOptions } from '@/lib/volunteers/constants'
 
 import { SubmitButton } from '@/components/submit-button'
 
@@ -68,6 +68,17 @@ export function VolunteerForm({ action, mode, serviceAreas, volunteer }: Volunte
           </div>
 
           <div className="field">
+            <label htmlFor="care_status">Status de cuidado</label>
+            <select className="select" defaultValue={volunteer?.careStatus ?? 'active'} id="care_status" name="care_status">
+              {careStatusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
             <label htmlFor="birth_date">Data de nascimento</label>
             <input className="input" defaultValue={volunteer?.birthDate ?? ''} id="birth_date" name="birth_date" type="date" />
           </div>
@@ -75,6 +86,48 @@ export function VolunteerForm({ action, mode, serviceAreas, volunteer }: Volunte
           <div className="field">
             <label htmlFor="join_date">Data de entrada</label>
             <input className="input" defaultValue={volunteer?.joinDate ?? ''} id="join_date" name="join_date" type="date" />
+          </div>
+
+          <div className="field">
+            <label htmlFor="last_contact_at">Ultimo contato</label>
+            <input
+              className="input"
+              defaultValue={volunteer?.lastContactAt ?? ''}
+              id="last_contact_at"
+              name="last_contact_at"
+              type="date"
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="next_follow_up_at">Proximo retorno</label>
+            <input
+              className="input"
+              defaultValue={volunteer?.nextFollowUpAt ?? ''}
+              id="next_follow_up_at"
+              name="next_follow_up_at"
+              type="date"
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="care_responsible">Responsavel pelo cuidado</label>
+            <input
+              className="input"
+              defaultValue={volunteer?.careResponsible ?? ''}
+              id="care_responsible"
+              name="care_responsible"
+            />
+          </div>
+
+          <div className="field-full">
+            <label htmlFor="next_step">Proximo passo</label>
+            <textarea
+              className="textarea textarea-compact"
+              defaultValue={volunteer?.nextStep ?? ''}
+              id="next_step"
+              name="next_step"
+            />
           </div>
 
           <div className="field-full">

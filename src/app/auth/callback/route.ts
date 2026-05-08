@@ -40,5 +40,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/blocked', request.url))
   }
 
-  return NextResponse.redirect(new URL('/voluntarios', request.url))
+  return NextResponse.redirect(new URL('/dados', request.url))
 }

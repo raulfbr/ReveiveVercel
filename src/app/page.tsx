@@ -9,7 +9,7 @@ export default async function HomePage() {
   const appUser = await getCurrentAppUser()
 
   if (appUser) {
-    redirect('/voluntarios')
+    redirect('/dados')
   }
 
   if (sessionUser) {

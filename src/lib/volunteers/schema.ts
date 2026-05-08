@@ -1,10 +1,11 @@
 import { z } from 'zod'
 
-import type { AvailabilityStatus, VolunteerAreaRole, VolunteerGender } from '@/lib/types'
+import type { AvailabilityStatus, VolunteerAreaRole, VolunteerCareStatus, VolunteerGender } from '@/lib/types'
 
 const genderEnum = z.enum(['female', 'male', 'other', 'prefer_not_to_say'])
 const availabilityEnum = z.enum(['available', 'limited', 'unavailable'])
 const areaRoleEnum = z.enum(['member', 'leader', 'coordinator'])
+const careStatusEnum = z.enum(['new', 'active', 'needs_contact', 'paused', 'inactive'])
 
 function getOptionalString(value: FormDataEntryValue | null) {
   if (typeof value !== 'string') {
@@ -50,6 +51,11 @@ const volunteerFormSchema = z.object({
   address: z.string().max(500).nullable(),
   whatsapp: z.string().max(40).nullable(),
   availabilityStatus: availabilityEnum.nullable(),
+  careStatus: careStatusEnum,
+  lastContactAt: z.string().nullable().refine(isIsoDate, 'Data do ultimo contato invalida.'),
+  nextStep: z.string().max(500).nullable(),
+  careResponsible: z.string().max(120).nullable(),
+  nextFollowUpAt: z.string().nullable().refine(isIsoDate, 'Data do proximo retorno invalida.'),
   notes: z.string().max(2000).nullable(),
   removePhoto: z.boolean(),
   selectedAreas: z.array(z.string()).default([]),
@@ -67,6 +73,11 @@ export type ParsedVolunteerInput = {
   whatsapp: string | null
   normalizedWhatsapp: string | null
   availabilityStatus: AvailabilityStatus | null
+  careStatus: VolunteerCareStatus
+  lastContactAt: string | null
+  nextStep: string | null
+  careResponsible: string | null
+  nextFollowUpAt: string | null
   notes: string | null
   removePhoto: boolean
   selectedAreas: string[]
@@ -98,6 +109,11 @@ export function parseVolunteerFormData(formData: FormData): {
     whatsapp: getOptionalString(formData.get('whatsapp')),
     availabilityStatus:
       (getOptionalString(formData.get('availability_status')) as AvailabilityStatus | null) ?? null,
+    careStatus: (getOptionalString(formData.get('care_status')) as VolunteerCareStatus | null) ?? 'active',
+    lastContactAt: getOptionalString(formData.get('last_contact_at')),
+    nextStep: getOptionalString(formData.get('next_step')),
+    careResponsible: getOptionalString(formData.get('care_responsible')),
+    nextFollowUpAt: getOptionalString(formData.get('next_follow_up_at')),
     notes: getOptionalString(formData.get('notes')),
     removePhoto: formData.get('remove_photo') === 'on',
     selectedAreas,
@@ -106,12 +122,14 @@ export function parseVolunteerFormData(formData: FormData): {
 
   const photoEntry = formData.get('photo')
   const photoFile = photoEntry instanceof File && photoEntry.size > 0 ? photoEntry : null
+  const active = parsed.careStatus === 'inactive' ? false : parsed.active
+  const careStatus = active ? parsed.careStatus : 'inactive'
 
   return {
     input: {
       name: parsed.name,
       normalizedName: normalizeName(parsed.name),
-      active: parsed.active,
+      active,
       gender: parsed.gender,
       birthDate: parsed.birthDate,
       joinDate: parsed.joinDate,
@@ -119,6 +137,11 @@ export function parseVolunteerFormData(formData: FormData): {
       whatsapp: parsed.whatsapp,
       normalizedWhatsapp: normalizeWhatsapp(parsed.whatsapp),
       availabilityStatus: parsed.availabilityStatus,
+      careStatus,
+      lastContactAt: parsed.lastContactAt,
+      nextStep: parsed.nextStep,
+      careResponsible: parsed.careResponsible,
+      nextFollowUpAt: parsed.nextFollowUpAt,
       notes: parsed.notes,
       removePhoto: parsed.removePhoto,
       selectedAreas: parsed.selectedAreas,
@@ -127,4 +150,3 @@ export function parseVolunteerFormData(formData: FormData): {
     photoFile,
   }
 }
-

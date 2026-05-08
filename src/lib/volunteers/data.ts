@@ -4,6 +4,7 @@ import type {
   ServiceArea,
   VolunteerAreaAssignment,
   VolunteerAreaRole,
+  VolunteerCareStatus,
   VolunteerGender,
   VolunteerRecord,
 } from '@/lib/types'
@@ -40,6 +41,11 @@ type VolunteerRow = {
   whatsapp: string | null
   normalized_whatsapp: string | null
   availability_status: AvailabilityStatus | null
+  care_status: VolunteerCareStatus
+  last_contact_at: string | null
+  next_step: string | null
+  care_responsible: string | null
+  next_follow_up_at: string | null
   notes: string | null
   active: boolean
   created_at: string
@@ -97,6 +103,11 @@ function mapVolunteer(row: VolunteerRow): VolunteerRecord {
     whatsapp: row.whatsapp,
     normalizedWhatsapp: row.normalized_whatsapp,
     availabilityStatus: row.availability_status,
+    careStatus: row.care_status,
+    lastContactAt: row.last_contact_at,
+    nextStep: row.next_step,
+    careResponsible: row.care_responsible,
+    nextFollowUpAt: row.next_follow_up_at,
     notes: row.notes,
     active: row.active,
     createdAt: row.created_at,
@@ -138,6 +149,11 @@ export async function getVolunteers(filters: VolunteerFilters = {}) {
         whatsapp,
         normalized_whatsapp,
         availability_status,
+        care_status,
+        last_contact_at,
+        next_step,
+        care_responsible,
+        next_follow_up_at,
         notes,
         active,
         created_at,
@@ -194,6 +210,11 @@ export async function getVolunteerById(volunteerId: string) {
         whatsapp,
         normalized_whatsapp,
         availability_status,
+        care_status,
+        last_contact_at,
+        next_step,
+        care_responsible,
+        next_follow_up_at,
         notes,
         active,
         created_at,

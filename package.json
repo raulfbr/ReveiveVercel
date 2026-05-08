@@ -10,6 +10,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "seed:demo-user": "node scripts/seed-demo-user.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

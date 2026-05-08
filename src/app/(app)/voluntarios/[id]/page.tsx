@@ -2,8 +2,16 @@ import { notFound } from 'next/navigation'
 
 import { VolunteerForm } from '@/components/volunteers/volunteer-form'
 import { requireAppUser } from '@/lib/auth/current-user'
-import { formatAreaRole, formatAvailabilityStatus, formatDate, formatDateTime, formatGender } from '@/lib/format'
+import {
+  formatAreaRole,
+  formatAvailabilityStatus,
+  formatCareStatus,
+  formatDate,
+  formatDateTime,
+  formatGender,
+} from '@/lib/format'
 import { getServiceAreas, getVolunteerById } from '@/lib/volunteers/data'
+import { getAreaLoadStatus, getVolunteerAttentionLabels, getWhatsappHref } from '@/lib/volunteers/insights'
 
 import { updateVolunteerAction } from '../actions'
 
@@ -50,6 +58,9 @@ export default async function VolunteerDetailPage({ params, searchParams }: Volu
   const serviceAreas = await getServiceAreas()
   const errorMessage = getSingleSearchParam(search.error)
   const successMessage = getSuccessMessage(getSingleSearchParam(search.saved))
+  const loadStatus = getAreaLoadStatus(volunteer)
+  const attentionLabels = getVolunteerAttentionLabels(volunteer)
+  const whatsappHref = getWhatsappHref(volunteer.whatsapp)
 
   return (
     <div className="section-grid">
@@ -65,6 +76,8 @@ export default async function VolunteerDetailPage({ params, searchParams }: Volu
               <span className={volunteer.active ? 'badge' : 'badge-danger'}>
                 {volunteer.active ? 'Ativo' : 'Inativo'}
               </span>
+              <span className={loadStatus.className}>{loadStatus.label}</span>
+              <span className="badge">{formatCareStatus(volunteer.careStatus)}</span>
               <span className="badge-warning">{appUser.role === 'admin' ? 'Edicao liberada' : 'Somente leitura'}</span>
             </div>
           </div>
@@ -105,12 +118,40 @@ export default async function VolunteerDetailPage({ params, searchParams }: Volu
 
           <div className="field">
             <label>WhatsApp</label>
-            <div>{volunteer.whatsapp || 'Nao informado'}</div>
+            <div>
+              {whatsappHref ? (
+                <a className="inline-link" href={whatsappHref} rel="noreferrer" target="_blank">
+                  {volunteer.whatsapp}
+                </a>
+              ) : (
+                'Nao informado'
+              )}
+            </div>
           </div>
 
           <div className="field">
             <label>Ultima atualizacao</label>
             <div>{formatDateTime(volunteer.updatedAt)}</div>
+          </div>
+
+          <div className="field">
+            <label>Ultimo contato</label>
+            <div>{formatDate(volunteer.lastContactAt)}</div>
+          </div>
+
+          <div className="field">
+            <label>Proximo retorno</label>
+            <div>{formatDate(volunteer.nextFollowUpAt)}</div>
+          </div>
+
+          <div className="field">
+            <label>Responsavel pelo cuidado</label>
+            <div>{volunteer.careResponsible || 'Nao informado'}</div>
+          </div>
+
+          <div className="field-full">
+            <label>Proximo passo</label>
+            <div>{volunteer.nextStep || 'Sem proximo passo registrado.'}</div>
           </div>
 
           <div className="field-full">
@@ -124,12 +165,24 @@ export default async function VolunteerDetailPage({ params, searchParams }: Volu
           </div>
 
           <div className="field-full">
+            <label>Leitura de cuidado</label>
+            <div className="stack">
+              <span className={loadStatus.className}>{loadStatus.label}</span>
+              {attentionLabels.length > 0 ? (
+                attentionLabels.map((label) => <span key={label}>{label}</span>)
+              ) : (
+                <span className="muted">Sem alerta adicional pelos dados atuais.</span>
+              )}
+            </div>
+          </div>
+
+          <div className="field-full">
             <label>Areas</label>
             <div className="stack">
               {volunteer.areas.length > 0 ? (
                 volunteer.areas.map((area) => (
                   <span key={`${volunteer.id}-${area.areaId}`}>
-                    {area.areaName} · {formatAreaRole(area.roleInArea)}
+                    {area.areaName} - {formatAreaRole(area.roleInArea)}
                   </span>
                 ))
               ) : (

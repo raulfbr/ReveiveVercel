@@ -1,0 +1,5 @@
+﻿name,phone,email,area,active,care_status,joined_at,last_contact_at,next_step,care_responsible,next_follow_up_at,notes
+Ana Souza,11999999999,ana@example.com,Recepcao,true,active,2026-04-12,2026-05-01,Confirmar disponibilidade de junho,Lucas,2026-05-15,Prefere domingo
+Bruno Lima,11988888888,,,true,new,2026-05-05,,Fazer primeiro contato e entender area de interesse,Raul,2026-05-10,Veio pelo GC
+Carla Mendes,11977777777,carla@example.com,Kids,true,needs_contact,2025-11-20,2026-04-01,Entender se precisa de pausa,Mariana,2026-05-09,
+Diego Alves,11966666666,,Louvor,false,paused,2024-08-03,2026-04-28,Retornar em junho,Lucas,2026-06-02,Pausa combinada

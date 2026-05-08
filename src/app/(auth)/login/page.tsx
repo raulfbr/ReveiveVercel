@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const errorMessage = getSingleSearchParam(params.error)
 
   if (appUser) {
-    redirect('/voluntarios')
+    redirect('/dados')
   }
 
   if (sessionUser) {
@@ -37,8 +37,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <span className="eyebrow">Revive MVP</span>
         <h1 className="title">Acesso interno de voluntarios</h1>
         <p className="lead">
-          Entre com Google para acessar a base de teste. O acesso so e liberado para usuarios cadastrados em
-          <code> app_users </code>.
+          Para apresentacao, entre com a conta demo abaixo. O Google continua disponivel para usuarios internos
+          cadastrados em <code> app_users </code>.
         </p>
         {errorMessage ? <p className="error-message">{decodeURIComponent(errorMessage)}</p> : null}
         {!supabaseStatus.configured ? (

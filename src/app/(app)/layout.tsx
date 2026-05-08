@@ -1,5 +1,4 @@
-import Link from 'next/link'
-
+import { AppNavLink } from '@/components/app-nav-link'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 import { requireAppUser } from '@/lib/auth/current-user'
 
@@ -27,9 +26,10 @@ export default async function AppLayout({
           </div>
 
           <nav className="nav-links">
-            <Link className="nav-link active" href="/voluntarios">
+            <AppNavLink href="/dados">Dados</AppNavLink>
+            <AppNavLink href="/voluntarios">
               Voluntarios
-            </Link>
+            </AppNavLink>
             <form action={signOutAction}>
               <SignOutButton />
             </form>
@@ -41,4 +41,3 @@ export default async function AppLayout({
     </div>
   )
 }
-

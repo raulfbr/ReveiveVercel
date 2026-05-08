@@ -1,4 +1,4 @@
-import type { AvailabilityStatus, VolunteerAreaRole, VolunteerGender } from '@/lib/types'
+import type { AvailabilityStatus, VolunteerAreaRole, VolunteerCareStatus, VolunteerGender } from '@/lib/types'
 
 export function formatDate(value: string | null) {
   if (!value) {
@@ -56,3 +56,17 @@ export function formatAreaRole(value: VolunteerAreaRole) {
   }
 }
 
+export function formatCareStatus(value: VolunteerCareStatus) {
+  switch (value) {
+    case 'new':
+      return 'Novo'
+    case 'needs_contact':
+      return 'Precisa contato'
+    case 'paused':
+      return 'Em pausa'
+    case 'inactive':
+      return 'Inativo'
+    default:
+      return 'Ativo em acompanhamento'
+  }
+}
