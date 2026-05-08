@@ -12,6 +12,9 @@ yarn-error.log*
 pnpm-debug.log*
 .next-dev*.log
 DOCUMENTOS/*.pdf
+/DOCUMENTOS/
+/Download/
+/Downloads/
 *.tsbuildinfo
 
 .vercel
