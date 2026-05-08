@@ -13,3 +13,7 @@ pnpm-debug.log*
 .next-dev*.log
 DOCUMENTOS/*.pdf
 *.tsbuildinfo
+
+.vercel
+.env*.local
+supabase/.temp/
