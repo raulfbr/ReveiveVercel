@@ -1,4 +1,4 @@
-import { AppNavLink } from '@/components/app-nav-link'
+﻿import { AppNavLink } from '@/components/app-nav-link'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 import { requireAppUser } from '@/lib/auth/current-user'
 
@@ -19,17 +19,17 @@ export default async function AppLayout({
         <header className="app-header auth-card">
           <div className="app-brand">
             <span className="eyebrow">Revive</span>
-            <strong>Base interna de voluntarios</strong>
+            <strong>Central de cuidado do voluntariado</strong>
             <span className="muted">
               {appUser.fullName || appUser.email} · {appUser.role}
             </span>
           </div>
 
           <nav className="nav-links">
-            <AppNavLink href="/dados">Dados</AppNavLink>
-            <AppNavLink href="/voluntarios">
-              Voluntarios
-            </AppNavLink>
+            <AppNavLink href="/dados">Semana</AppNavLink>
+            <AppNavLink href="/voluntarios">Voluntários</AppNavLink>
+            <AppNavLink href="/dados/cuidado">Cuidado</AppNavLink>
+            <AppNavLink href="/dados/importar">Importar</AppNavLink>
             <form action={signOutAction}>
               <SignOutButton />
             </form>
