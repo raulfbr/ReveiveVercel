@@ -27,6 +27,7 @@ export default async function AppLayout({
 
           <nav className="nav-links">
             <AppNavLink href="/dados">Semana</AppNavLink>
+            <AppNavLink href="/escalas">Escalas</AppNavLink>
             <AppNavLink href="/voluntarios">Voluntários</AppNavLink>
             <AppNavLink href="/dados/cuidado">Cuidado</AppNavLink>
             <AppNavLink href="/dados/importar">Importar</AppNavLink>

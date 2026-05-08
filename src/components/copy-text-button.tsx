@@ -3,10 +3,18 @@
 import { useState } from 'react'
 
 type CopyTextButtonProps = {
+  copiedLabel?: string
+  failedLabel?: string
+  label?: string
   text: string
 }
 
-export function CopyTextButton({ text }: CopyTextButtonProps) {
+export function CopyTextButton({
+  copiedLabel = 'Resumo copiado',
+  failedLabel = 'Copie manualmente',
+  label = 'Copiar resumo',
+  text,
+}: CopyTextButtonProps) {
   const [copied, setCopied] = useState(false)
   const [failed, setFailed] = useState(false)
 
@@ -25,7 +33,7 @@ export function CopyTextButton({ text }: CopyTextButtonProps) {
 
   return (
     <button className="button-secondary" onClick={handleCopy} type="button">
-      {copied ? 'Resumo copiado' : failed ? 'Copie manualmente' : 'Copiar resumo'}
+      <span aria-live="polite">{copied ? copiedLabel : failed ? failedLabel : label}</span>
     </button>
   )
 }
